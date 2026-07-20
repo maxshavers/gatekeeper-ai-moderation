@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Gatekeeper{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'moderation/style.css' %}">
+</head>
+<body>
+  <div class="topbar">
+    <div class="wordmark">
+      <span class="dot"></span>
+      GATEKEEPER
+      <span class="sub">chat trust &amp; safety</span>
+    </div>
+    <div class="stat-group">
+      <div class="stat"><div class="n">{{ pending_total|default:"—" }}</div><div class="l">pending</div></div>
+      <div class="stat"><div class="n">{{ resolved_total|default:"—" }}</div><div class="l">resolved</div></div>
+    </div>
+  </div>
+  <nav class="tabs">
+    <a href="{% url 'dashboard' %}" class="{% block nav_dashboard %}{% endblock %}">Queue</a>
+    <a href="{% url 'history' %}" class="{% block nav_history %}{% endblock %}">Action Log</a>
+    <a href="/admin/">Admin</a>
+    <a href="/api/classifications/">API</a>
+  </nav>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

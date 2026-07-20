@@ -1,0 +1,32 @@
+{% extends "moderation/base.html" %}
+{% block title %}Action Log — Gatekeeper{% endblock %}
+{% block nav_history %}active{% endblock %}
+
+{% block content %}
+<table class="history">
+  <thead>
+    <tr>
+      <th>When</th>
+      <th>Moderator</th>
+      <th>Sender</th>
+      <th>Message</th>
+      <th>Change</th>
+      <th>Note</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in actions %}
+    <tr>
+      <td>{{ a.created_at|date:"Y-m-d H:i:s" }}</td>
+      <td>{{ a.moderator.username|default:"system" }}</td>
+      <td>{{ a.classification.message.sender_handle }}</td>
+      <td>{{ a.classification.message.body|truncatechars:60 }}</td>
+      <td>{{ a.previous_status }} &rarr; {{ a.new_status }}</td>
+      <td>{{ a.note|default:"—" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" class="empty-state">No moderator actions logged yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

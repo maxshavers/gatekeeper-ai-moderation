@@ -1,0 +1,70 @@
+{% extends "moderation/base.html" %}
+{% block title %}Queue — Gatekeeper{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+
+{% block content %}
+<form class="filters" method="get">
+  <span class="pill {% if not selected_category %}on{% endif %}">all</span>
+  <select name="category" onchange="this.form.submit()">
+    <option value="">All categories</option>
+    {% for value, label in category_choices %}
+      <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <select name="min_severity" onchange="this.form.submit()">
+    <option value="">Any severity</option>
+    <option value="30" {% if min_severity == "30" %}selected{% endif %}>30+</option>
+    <option value="60" {% if min_severity == "60" %}selected{% endif %}>60+</option>
+    <option value="85" {% if min_severity == "85" %}selected{% endif %}>85+ (urgent)</option>
+  </select>
+</form>
+
+{% if not queue %}
+  <div class="empty-state">
+    Queue is clear. Run <code>python manage.py seed_data</code> and<br>
+    <code>python manage.py classify_messages</code> to populate it.
+  </div>
+{% endif %}
+
+{% for c in queue %}
+  <div class="queue-row">
+    <div class="signal">
+      {% for i in "0123456789" %}
+        <span class="tick {% if forloop.counter <= c.tick_count %}lit {{ c.band }}{% endif %}"></span>
+      {% endfor %}
+    </div>
+    <div class="meta">
+      <span class="handle">{{ c.message.sender_handle }}</span>
+      <span class="session">{{ c.message.game_session_id }}</span><br>
+      {{ c.message.sent_at|date:"H:i:s" }}
+    </div>
+    <div>
+      <span class="badge {{ c.band }}">{{ c.get_category_display }} · sev {{ c.severity }} · conf {{ c.confidence|floatformat:2 }}</span>
+      <div class="body-text">&ldquo;{{ c.message.body }}&rdquo;</div>
+      <div class="rationale"><span class="label">rationale</span>{{ c.rationale }}</div>
+    </div>
+    <div class="actions">
+      <form method="post" action="{% url 'take_action' c.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="status" value="approved">
+        <button type="submit" class="approve">Clear</button>
+      </form>
+      <form method="post" action="{% url 'take_action' c.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="status" value="warned">
+        <button type="submit">Warn</button>
+      </form>
+      <form method="post" action="{% url 'take_action' c.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="status" value="muted">
+        <button type="submit">Mute</button>
+      </form>
+      <form method="post" action="{% url 'take_action' c.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="status" value="banned">
+        <button type="submit" class="danger">Ban</button>
+      </form>
+    </div>
+  </div>
+{% endfor %}
+{% endblock %}
