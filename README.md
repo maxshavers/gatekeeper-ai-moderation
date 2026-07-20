@@ -1,12 +1,12 @@
-# Gatekeeper — AI Content Moderation Prototype for In-Game Chat
+# Gatekeeper — AI Content Moderation Prototype for In Game Chat
 
 A trust & safety prototype that ingests in-game chat, classifies each message
 with Claude (category, severity, confidence, rationale), and routes flagged
 content into a human-review dashboard with full audit logging of moderator
 decisions.
 
-Built as a follow-up to a case study on AI-driven gaming trust and safety —
-this turns that research into a working system.
+Built as a follow-up to a case study on AI-driven gaming trust and safety.
+This turns that research into a working system.
 
 ## What it does
 
